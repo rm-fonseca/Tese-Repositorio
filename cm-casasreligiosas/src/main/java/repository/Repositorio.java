@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import plataforma.modelointerno.ExtraProperty;
 import plataforma.modelointerno.LanguageString;
 import plataforma.modelointerno.Location;
+import plataforma.modelointerno.Point;
 import plataforma.modelointerno.Result;
 
 public class Repositorio implements RepositoryAbstract {
@@ -105,9 +106,11 @@ public class Repositorio implements RepositoryAbstract {
 			}
 
 			Location loc = new Location();
-			loc.getLatitude().add(geometry.getFloat("y"));
-			loc.getLongitude().add(geometry.getFloat("x"));
 
+			Point point = new Point();
+			point.setLatitude(geometry.getFloat("y"));
+			point.setLongitude(geometry.getFloat("x"));
+			loc.getCoordinates().add(point);
 			result.getLocations().add(loc);
 
 			resultsList.add(result);
@@ -164,24 +167,19 @@ public class Repositorio implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repositorio.class.getProtectionDomain()
-					  .getCodeSource()
-					  .getLocation()
-					  .getPath())
-					.getName();
-			
+			String name = new java.io.File(
+					Repositorio.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
 			int pos = name.lastIndexOf(".");
 			if (pos > 0) {
-			    name = name.substring(0, pos);
+				name = name.substring(0, pos);
 			}
-			
-	
+
 			input = new FileInputStream("Repositorios/" + name + ".properties");
 			prop.load(input);
-			
-			
+
 			repName = prop.getOrDefault("Name", "").toString();
-			
+
 		}
 
 		return repName;

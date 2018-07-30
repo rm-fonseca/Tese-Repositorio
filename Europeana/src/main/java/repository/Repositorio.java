@@ -18,6 +18,7 @@ import plataforma.modelointerno.DateTime;
 import plataforma.modelointerno.ExtraProperty;
 import plataforma.modelointerno.LanguageString;
 import plataforma.modelointerno.Location;
+import plataforma.modelointerno.Point;
 import plataforma.modelointerno.Resource;
 import plataforma.modelointerno.Result;
 import plataforma.modelointerno.TimeSpan;
@@ -643,7 +644,10 @@ public class Repositorio implements RepositoryAbstract {
 
 			// jsonArray = (JSONArray) object;
 
-			location.getLatitude().add(Float.parseFloat(object.toString()));
+			if(location.getCoordinates().size() == 0)
+				location.getCoordinates().add(new Point());
+			
+			location.getCoordinates().get(0).setLatitude((Float.parseFloat(object.toString())));
 
 			// for (int i = 0; i < jsonArray.length(); i++)
 			// location.getLatitude().add(jsonArray.getFloat(i));
@@ -652,7 +656,10 @@ public class Repositorio implements RepositoryAbstract {
 
 		case "longitude":
 
-			location.getLongitude().add(Float.parseFloat(object.toString()));
+			if(location.getCoordinates().size() == 0)
+				location.getCoordinates().add(new Point());
+			
+			location.getCoordinates().get(0).setLongitude((Float.parseFloat(object.toString())));
 
 			break;
 
