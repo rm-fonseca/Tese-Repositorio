@@ -284,7 +284,7 @@ public class Repositorio implements RepositoryAbstract {
 
 		case "places":
 
-			int idPlace = 0;
+			int idPlace = 1;
 			jsonArray = (JSONArray) values;
 
 			for (int i = 0; i < jsonArray.length(); i++) {

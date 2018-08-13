@@ -23,7 +23,7 @@
 				<xs:element name="disableCombine" type="xs:boolean"
 					minOccurs="1" maxOccurs="1" default="false" />
 			</xs:sequence>
-		</xs:complexType>
+		</xs:complexType> 
 	</xs:element>
 
 
