@@ -28,7 +28,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.json.*;
 
-public class Repositorio implements RepositoryAbstract {
+public class Repository implements RepositoryAbstract {
 
 	
 	private String repName = null;
@@ -906,7 +906,7 @@ public class Repositorio implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repositorio.class.getProtectionDomain()
+			String name = new java.io.File(Repository.class.getProtectionDomain()
 					  .getCodeSource()
 					  .getLocation()
 					  .getPath())
@@ -937,7 +937,7 @@ public class Repositorio implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repositorio.class.getProtectionDomain()
+			String name = new java.io.File(Repository.class.getProtectionDomain()
 					  .getCodeSource()
 					  .getLocation()
 					  .getPath())

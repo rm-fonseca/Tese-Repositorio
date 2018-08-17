@@ -23,7 +23,7 @@ import plataforma.modelointerno.Resource;
 import plataforma.modelointerno.Result;
 import plataforma.modelointerno.Result.CreatedIn;
 
-public class Repositorio implements RepositoryAbstract {
+public class Repository implements RepositoryAbstract {
 
 	private static final String QUERY_BY_TERM = "http://api.digitalnz.org/v3/records.json?api_key=%s&text=%s";
 
@@ -234,7 +234,7 @@ public class Repositorio implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repositorio.class.getProtectionDomain()
+			String name = new java.io.File(Repository.class.getProtectionDomain()
 					  .getCodeSource()
 					  .getLocation()
 					  .getPath())
@@ -265,7 +265,7 @@ public class Repositorio implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repositorio.class.getProtectionDomain()
+			String name = new java.io.File(Repository.class.getProtectionDomain()
 					  .getCodeSource()
 					  .getLocation()
 					  .getPath())

@@ -22,7 +22,7 @@ import plataforma.modelointerno.Resource;
 import plataforma.modelointerno.Result;
 import plataforma.modelointerno.Result.CreatedIn;
 
-public class Repositorio implements RepositoryAbstract {
+public class Repository implements RepositoryAbstract {
 
 	private static final String QUERY_BY_TERM = "http://data.fitzmuseum.cam.ac.uk/api/?query=";
 	private static final String SOURCE_PAGE_BASE_URL = "http://data.fitzmuseum.cam.ac.uk/id/object/";
@@ -288,7 +288,7 @@ public class Repositorio implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repositorio.class.getProtectionDomain()
+			String name = new java.io.File(Repository.class.getProtectionDomain()
 					  .getCodeSource()
 					  .getLocation()
 					  .getPath())

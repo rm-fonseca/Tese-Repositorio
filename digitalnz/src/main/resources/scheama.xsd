@@ -8,7 +8,7 @@
 
 	<!-- < Search By Term > -->
 
-
+ 
 	<xs:element name="searchByTermRequest">
 		<xs:complexType>
 			<xs:sequence>
@@ -24,7 +24,7 @@
 					minOccurs="1" maxOccurs="1" default="false" />
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>
+	</xs:element> 
 
 
 	<xs:element name="searchByTermResponse">

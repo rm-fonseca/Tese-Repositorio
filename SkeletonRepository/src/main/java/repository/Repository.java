@@ -3,7 +3,7 @@ package repository;
 import java.util.List;
 import plataforma.modelointerno.Result;
 
-public class Repositorio implements RepositoryAbstract {
+public class Repository implements RepositoryAbstract {
 
 	@Override
 	public List<Result> SearchByBox(int latitudeFrom, int latitudeTo, int longitudeFrom, int longitudeTo,

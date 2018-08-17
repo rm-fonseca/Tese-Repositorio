@@ -29,7 +29,7 @@ import plataforma.modelointerno.Location;
 import plataforma.modelointerno.Point;
 import plataforma.modelointerno.Result;
 
-public class Repositorio implements RepositoryAbstract {
+public class Repository implements RepositoryAbstract {
 
 	private static final String QUERY_BY_TERM_PART1 = "https://services.arcgis.com/1dSrzEWVQn5kHHyK/arcgis/rest/services/Cultura_CasasReligiosas/FeatureServer/0/query?where=UPPER(DESIGNACAO) like '%";
 	private static final String QUERY_BY_TERM_PART2 = "%'&outFields=*&outSR=4326&f=json";
@@ -168,7 +168,7 @@ public class Repositorio implements RepositoryAbstract {
 			InputStream input = null;
 
 			String name = new java.io.File(
-					Repositorio.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
 
 			int pos = name.lastIndexOf(".");
 			if (pos > 0) {
