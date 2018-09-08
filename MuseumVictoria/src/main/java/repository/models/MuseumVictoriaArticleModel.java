@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class MuseumVictoryArticleModel {
+public class MuseumVictoriaArticleModel {
     @JsonProperty("recordType")
     public String recordType;
 
@@ -47,10 +47,10 @@ public class MuseumVictoryArticleModel {
     @JsonProperty("yearWritten")
     public String yearWritten;
 
-    @JsonProperty("parentArtivleId")
+    @JsonProperty("parentArticleId")
     public String parentArticleId;
 
-    @JsonProperty("childArticlesIds")
+    @JsonProperty("childArticleIds")
     public List<String> childArticleIds;
 
     @JsonProperty("relatedArticleIds")

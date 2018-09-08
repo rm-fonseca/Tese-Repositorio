@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
@@ -19,6 +20,7 @@ import plataforma.modelointerno.ExtraProperty;
 import plataforma.modelointerno.LanguageString;
 import plataforma.modelointerno.Resource;
 import plataforma.modelointerno.Result;
+import repository.models.MuseumVictoriaArticleModel;
 
 public class Repository implements RepositoryAbstract {
 
@@ -46,6 +48,9 @@ public class Repository implements RepositoryAbstract {
 		restTemplate.setRequestFactory(factory);
 		// Request
 		String response = restTemplate.getForObject(QUERY_BY_TERM + term, String.class);
+		ObjectMapper mapper = new ObjectMapper();
+		MuseumVictoriaArticleModel[] article = mapper.readValue(response, MuseumVictoriaArticleModel[].class);
+
 		List<Result> resultsList = new ArrayList<Result>();
 		//JSONObject responseJson = new JSONObject(response);
 		JSONArray items = new JSONArray(response);

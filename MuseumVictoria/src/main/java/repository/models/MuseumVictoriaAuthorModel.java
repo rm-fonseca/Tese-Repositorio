@@ -14,4 +14,7 @@ public class MuseumVictoriaAuthorModel {
 
     @JsonProperty("biography")
     public String biography;
+
+    @JsonProperty("profileImage")
+    public MuseumVictoriaMediaModel profileImage;
 }
