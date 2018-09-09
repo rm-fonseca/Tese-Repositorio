@@ -23,7 +23,9 @@ import plataforma.modelointerno.LanguageString;
 import plataforma.modelointerno.Resource;
 import plataforma.modelointerno.Result;
 import repository.models.MuseumVictoriaArticleModel;
+import repository.models.MuseumVictoriaItemModel;
 import repository.models.MuseumVictoriaRecordTypeModel;
+import repository.models.MuseumVictoriaSpecimenModel;
 
 public class Repository implements RepositoryAbstract {
 
@@ -57,7 +59,6 @@ public class Repository implements RepositoryAbstract {
 		String response = restTemplate.getForObject(QUERY_BY_TERM + term, String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		final ObjectNode[] nodes = mapper.readValue(response, ObjectNode[].class);
-		//MuseumVictoriaRecordTypeModel[] article = mapper.readValue(response, MuseumVictoriaRecordTypeModel[].class);
 
 		for(ObjectNode node : nodes) {
 			if(node.has("recordType")) {
@@ -66,6 +67,15 @@ public class Repository implements RepositoryAbstract {
 					case MuseumVictoriaRecordTypeModel.ARTICLE_RECORD_TYPE:
 						MuseumVictoriaArticleModel articleModel = mapper.readValue(node.toString(), MuseumVictoriaArticleModel.class);
 						connectDataArticle(articleModel, resultsList, ignoreExtraProperties);
+						break;
+					case MuseumVictoriaRecordTypeModel.ITEM_RECORD_TYPE:
+						MuseumVictoriaItemModel itemModel = mapper.readValue(node.toString(), MuseumVictoriaItemModel.class);
+						connectDataItem(itemModel, resultsList, ignoreExtraProperties);
+						break;
+					case MuseumVictoriaRecordTypeModel.SPECIMEN_RECORD_TYPE:
+						MuseumVictoriaSpecimenModel specimenModel = mapper.readValue(node.toString(), MuseumVictoriaSpecimenModel.class);
+						connectDataSpecimen(specimenModel, resultsList, ignoreExtraProperties);
+						break;
 					default:
 						break;
 				}
@@ -129,12 +139,76 @@ public class Repository implements RepositoryAbstract {
 		results.add(result);
 	}
 
-	private static void connectDataItem(Object itemModel, List<Result> results, boolean ignoreExtraProperties) {
+	private static void connectDataItem(MuseumVictoriaItemModel itemModel, List<Result> results, boolean ignoreExtraProperties) throws IOException {
+		Result result = new Result();
+		result.getSourcePage().add(SOURCE_PAGE_BASE_URL + itemModel.id);
+		result.getSourceData().add(SOURCE_DATA_BASE_URL + itemModel.id);
+		result.getSourceRepositorie().add(getRepositoryName());
 
+		//Record Type, Category, Discipline, Type
+		result.getDcType().add(new LanguageString() {{
+			setLanguage("en");
+			getText().add(itemModel.recordType);
+			getText().add(itemModel.category);
+			getText().add(itemModel.discipline);
+			getText().add(itemModel.type);
+		}});
+		//Comments -- Not implemented
+		//License
+		result.getDcRights().add(new LanguageString() {{
+			setLanguage("en");
+			getText().add(itemModel.licence.name);
+		}});
+		result.getDcRights().add(new LanguageString() {{
+			setLanguage("en");
+			getText().add(itemModel.licence.uri);
+		}});
+		//Date Modified
+		result.getTermsModified().add(new LanguageString(){{
+			setLanguage("en");
+			getText().add(itemModel.dateModified);
+		}});
+		//Display Title
+		result.getDcTitle().add(new LanguageString(){{
+			setLanguage("en");
+			getText().add(itemModel.displayTitle);
+		}});
+		//CollectingAreas & Classifications
+		for(String collectingArea : itemModel.collectingAreas) {
+			ExtraProperty extraProperty = new ExtraProperty();
+			extraProperty.setName("collectingAreas");
+			extraProperty.getValue().add(collectingArea);
+			result.getExtraProperties().add(extraProperty);
+		}
+		for(String classification : itemModel.classifications) {
+			ExtraProperty extraProperty = new ExtraProperty();
+			extraProperty.setName("collectingAreas");
+			extraProperty.getValue().add(classification);
+			result.getExtraProperties().add(extraProperty);
+		}
+
+		//ObjectName & ObjectSummary
+		result.getExtraProperties().add(new ExtraProperty(){{
+			setName("Object Name");
+			getValue().add(itemModel.objectName);
+		}});
+		result.getExtraProperties().add(new ExtraProperty(){{
+			setName("Object Summary");
+			getValue().add(itemModel.objectSummary);
+		}});
+
+		results.add(result);
 	}
 
-	private static void connectDataSpeciment(Object specimenModel, List<Result> results, boolean ignoreExtraProperties) {
+	private static void connectDataSpecimen(MuseumVictoriaSpecimenModel specimenModel, List<Result> results, boolean ignoreExtraProperties) throws IOException {
+		Result result = new Result();
+		result.getSourcePage().add(SOURCE_PAGE_BASE_URL + specimenModel.id);
+		result.getSourceData().add(SOURCE_DATA_BASE_URL + specimenModel.id);
+		result.getSourceRepositorie().add(getRepositoryName());
 
+		//TODO: Complete mapping of Json to Result
+
+		results.add(result);
 	}
 
 	private static LanguageString getLanguageStringDef (List<LanguageString> langs) {
