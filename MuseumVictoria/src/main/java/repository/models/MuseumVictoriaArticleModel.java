@@ -39,10 +39,10 @@ public class MuseumVictoriaArticleModel {
     public List<MuseumVictoriaAuthorModel> authors;
 
     @JsonProperty("contributors")
-    public List<String> contributers;
+    public List<MuseumVictoriaAuthorModel> contributers;
 
     @JsonProperty("media")
-    public List<MuseumVictoriaMediaModel> media;
+    public List<AMuseumVictoriaMediaModel> media;
 
     @JsonProperty("yearWritten")
     public String yearWritten;

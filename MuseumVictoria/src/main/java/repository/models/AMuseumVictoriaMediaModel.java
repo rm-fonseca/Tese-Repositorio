@@ -1,28 +1,20 @@
 package repository.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.List;
 
-@Deprecated
-public class MuseumVictoriaMediaModel {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = MuseumVictoriaImageMediaModel.class, name = "image"),
+        @JsonSubTypes.Type(value = MuseumVictoriaFileMediaModel.class, name = "file"),
+        @JsonSubTypes.Type(value = MuseumVictoriaUriMediaModel.class, name = "uri")
+})
+public abstract class AMuseumVictoriaMediaModel {
     @JsonProperty("type")
     public String type;
-
-    @JsonProperty("alternativeText")
-    public String alternativeText;
-
-    @JsonProperty("large")
-    public MuseumVictoriaMediaTypeModel large;
-
-    @JsonProperty("medium")
-    public MuseumVictoriaMediaTypeModel medium;
-
-    @JsonProperty("small")
-    public MuseumVictoriaMediaTypeModel small;
-
-    @JsonProperty("thumbnail")
-    public MuseumVictoriaMediaTypeModel thumbnail;
 
     @JsonProperty("dateModified")
     public String dateModified;

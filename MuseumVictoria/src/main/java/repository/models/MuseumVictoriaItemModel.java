@@ -81,7 +81,7 @@ public class MuseumVictoriaItemModel {
     public List<String> modelNames;
 
     @JsonProperty("brands")
-    public List<String> brands;
+    public List<Object> brands;
 
     @JsonProperty("relatedItemIds")
     public List<String> relatedItemIds;
@@ -96,262 +96,262 @@ public class MuseumVictoriaItemModel {
     public List<String> relatedSpeciesIds;
 
     @JsonProperty("media")
-    public List<MuseumVictoriaMediaModel> media;
+    public List<AMuseumVictoriaMediaModel> media;
 
     @JsonProperty("acquisitionInformation")
     public String acquisitionInformation;
 
     @JsonProperty("acknowledgement")
-    public String acknowledgement;
+    public Object acknowledgement;
 
     @JsonProperty("museumLocation")
     public MuseumVictoriaMuseumLocationModel museumLocation;
 
     @JsonProperty("archeologyContextNumber")
-    public String archeologyContextNumber;
+    public Object archeologyContextNumber;
 
     @JsonProperty("archeologySite")
-    public String archeologySite;
+    public Object archeologySite;
 
     @JsonProperty("archeologyDescription")
-    public String archeologyDescription;
+    public Object archeologyDescription;
 
     @JsonProperty("archeologyDistinguishingMarks")
-    public String archeologyDistinguishingMarks;
+    public Object archeologyDistinguishingMarks;
 
     @JsonProperty("archeologyActivity")
-    public String archeologyActivity;
+    public Object archeologyActivity;
 
     @JsonProperty("archeologySpecificActivity")
-    public String archeologySpecificActivity;
+    public Object archeologySpecificActivity;
 
     @JsonProperty("archeologyDecoration")
-    public String archeologyDecoration;
+    public Object archeologyDecoration;
 
     @JsonProperty("archeologyPattern")
-    public String archeologyPattern;
+    public Object archeologyPattern;
 
     @JsonProperty("archeologyColour")
-    public String archeologyColour;
+    public Object archeologyColour;
 
     @JsonProperty("archeologyMoulding")
-    public String archeologyMoulding;
+    public Object archeologyMoulding;
 
     @JsonProperty("archeologyPlacement")
-    public String archeologyPlacement;
+    public Object archeologyPlacement;
 
     @JsonProperty("archeologyForm")
-    public String archeologyForm;
+    public Object archeologyForm;
 
     @JsonProperty("archeologyShape")
-    public String archeologyShape;
+    public Object archeologyShape;
 
     @JsonProperty("archeologyManufactureName")
-    public String archeologyManufactureName;
+    public Object archeologyManufactureName;
 
     @JsonProperty("archeologyManufactureDate")
-    public String archeologyManufactureDate;
+    public Object archeologyManufactureDate;
 
     @JsonProperty("archeologyTechnique")
-    public String archeologyTechnique;
+    public Object archeologyTechnique;
 
     @JsonProperty("archeologyProvenance")
-    public String archeologyProvenance;
+    public Object archeologyProvenance;
 
     @JsonProperty("numismaticsDenomination")
-    public String numismaticsDenomination;
+    public Object numismaticsDenomination;
 
     @JsonProperty("numismaticsDateIssued")
-    public String numismaticsDateIssued;
+    public Object numismaticsDateIssued;
 
     @JsonProperty("numismaticsSeries")
-    public String numismaticsSeries;
+    public Object numismaticsSeries;
 
     @JsonProperty("numismaticsMaterial")
-    public String numismaticsMaterial;
+    public Object numismaticsMaterial;
 
     @JsonProperty("numismaticsAxis")
-    public String numismaticsAxis;
+    public Object numismaticsAxis;
 
     @JsonProperty("numismaticsEdgeDescription")
-    public String numismaticsEdgeDescription;
+    public Object numismaticsEdgeDescription;
 
     @JsonProperty("numismaticsObverseDescription")
-    public String numismaticsObverseDescription;
+    public Object numismaticsObverseDescription;
 
     @JsonProperty("numismaticsReverseDescription")
-    public String numismaticsReverseDescription;
+    public Object numismaticsReverseDescription;
 
     @JsonProperty("philatelyColour")
-    public String philatelyColour;
+    public Object philatelyColour;
 
     @JsonProperty("philatelyDenomination")
-    public String philatelyDenomination;
+    public Object philatelyDenomination;
 
     @JsonProperty("philatelyImprint")
-    public String philatelyImprint;
+    public Object philatelyImprint;
 
     @JsonProperty("philatelyIssue")
-    public String philatelyIssue;
+    public Object philatelyIssue;
 
     @JsonProperty("philatelyDateIssued")
-    public String philatelyDateIssued;
+    public Object philatelyDateIssued;
 
     @JsonProperty("philatelyForm")
-    public String philatelyForm;
+    public Object philatelyForm;
 
     @JsonProperty("philatelyOverprint")
-    public String philatelyOverprint;
+    public Object philatelyOverprint;
 
     @JsonProperty("philatelyGibbonsNumber")
-    public String philatelyGibbonsNumber;
+    public Object philatelyGibbonsNumber;
 
     @JsonProperty("isdFormat")
-    public String isdFormat;
+    public Object isdFormat;
 
     @JsonProperty("isdLanguage")
-    public String isdLanguage;
+    public Object isdLanguage;
 
     @JsonProperty("isdDescriptionOfContent")
-    public String isdDescriptionOfContent;
+    public Object isdDescriptionOfContent;
 
     @JsonProperty("isdPeopleDepicted")
-    public String isdPeopleDepicted;
+    public Object isdPeopleDepicted;
 
     @JsonProperty("audioVisualRecordingDetails")
-    public String audioVisualRecordingDetails;
+    public Object audioVisualRecordingDetails;
 
     @JsonProperty("audioVisualContentSummaries")
-    public List<String> audioVisualContentSummaries;
+    public List<Object> audioVisualContentSummaries;
 
     @JsonProperty("tradeLiteratureNumberofPages")
-    public String tradeLiteratureNumberofPages;
+    public Object tradeLiteratureNumberofPages;
 
     @JsonProperty("tradeLiteraturePageSizeFormat")
-    public String tradeLiteraturePageSizeFormat;
+    public Object tradeLiteraturePageSizeFormat;
 
     @JsonProperty("tradeLiteratureCoverTitle")
-    public String tradeLiteratureCoverTitle;
+    public Object tradeLiteratureCoverTitle;
 
     @JsonProperty("tradeLiteraturePrimarySubject")
-    public String tradeLiteraturePrimarySubject;
+    public Object tradeLiteraturePrimarySubject;
 
     @JsonProperty("tradeLiteraturePublicationDate")
-    public String tradeLiteraturePublicationDate;
+    public Object tradeLiteraturePublicationDate;
 
     @JsonProperty("tradeLiteratureIllustrationTypes")
-    public String tradeLiteratureIllustrationTypes;
+    public Object tradeLiteratureIllustrationTypes;
 
     @JsonProperty("tradeLiteraturePrintingTypes")
-    public String tradeLiteraturePrintingTypes;
+    public Object tradeLiteraturePrintingTypes;
 
     @JsonProperty("tradeLiteraturePublicationTypes")
-    public List<String> tradeLiteraturePublicationTypes;
+    public List<Object> tradeLiteraturePublicationTypes;
 
     @JsonProperty("tradeLiteraturePrimaryRole")
-    public String tradeLiteraturePrimaryRole;
+    public Object tradeLiteraturePrimaryRole;
 
     @JsonProperty("tradeLiteraturePrimaryName")
-    public String tradeLiteraturePrimaryName;
+    public Object tradeLiteraturePrimaryName;
 
     @JsonProperty("indigenousCulturesLocalities")
-    public List<String> indigenousCulturesLocalities;
+    public List<Object> indigenousCulturesLocalities;
 
     @JsonProperty("indigenousCulturesCulturalGroups")
-    public List<String> indigenousCulturesCulturalGroups;
+    public List<Object> indigenousCulturesCulturalGroups;
 
     @JsonProperty("indigenousCulturesMedium")
-    public String indigenousCulturesMedium;
+    public Object indigenousCulturesMedium;
 
     @JsonProperty("indigenousCulturesDescription")
-    public String indigenousCulturesDescription;
+    public Object indigenousCulturesDescription;
 
     @JsonProperty("indigenousCulturesLocalName")
-    public String indigenousCulturesLocalName;
+    public Object indigenousCulturesLocalName;
 
     @JsonProperty("indigenousCulturesPhotographer")
-    public String indigenousCulturesPhotographer;
+    public Object indigenousCulturesPhotographer;
 
     @JsonProperty("indigenousCulturesAuthor")
-    public String indigenousCulturesAuthor;
+    public Object indigenousCulturesAuthor;
 
     @JsonProperty("indigenousCulturesIllustrator")
-    public String indigenousCulturesIllustrator;
+    public Object indigenousCulturesIllustrator;
 
     @JsonProperty("indigenousCulturesMaker")
-    public String indigenousCulturesMaker;
+    public Object indigenousCulturesMaker;
 
     @JsonProperty("indigenousCulturesDate")
-    public String indigenousCulturesDate;
+    public Object indigenousCulturesDate;
 
     @JsonProperty("indigenousCulturesCollector")
-    public String indigenousCulturesCollector;
+    public Object indigenousCulturesCollector;
 
     @JsonProperty("indigenousCulturesDateCollected")
-    public String indigenousCulturesDateCollected;
+    public Object indigenousCulturesDateCollected;
 
     @JsonProperty("indigenousCulturesIndividualsIdentified")
-    public String indigenousCulturesIndividualsIdentified;
+    public Object indigenousCulturesIndividualsIdentified;
 
     @JsonProperty("indigenousCulturesTitle")
-    public String indigenousCulturesTitle;
+    public Object indigenousCulturesTitle;
 
     @JsonProperty("indigenousCulturesSheets")
-    public String indigenousCulturesSheets;
+    public Object indigenousCulturesSheets;
 
     @JsonProperty("indigenousCulturesPages")
-    public String indigenousCulturesPages;
+    public Object indigenousCulturesPages;
 
     @JsonProperty("indigenousCulturesLetterTo")
-    public String indigenousCulturesLetterTo;
+    public Object indigenousCulturesLetterTo;
 
     @JsonProperty("indigenousCulturesLetterFrom")
-    public String indigenousCulturesLetterFrom;
+    public Object indigenousCulturesLetterFrom;
 
     @JsonProperty("artworkMedium")
-    public String artworkMedium;
+    public Object artworkMedium;
 
     @JsonProperty("artworkTechnique")
-    public String artworkTechnique;
+    public Object artworkTechnique;
 
     @JsonProperty("artworkSupport")
-    public String artworkSupport;
+    public Object artworkSupport;
 
     @JsonProperty("artworkPlateNumber")
-    public String artworkPlateNumber;
+    public Object artworkPlateNumber;
 
     @JsonProperty("artworkDrawingNumber")
-    public String artworkDrawingNumber;
+    public Object artworkDrawingNumber;
 
     @JsonProperty("artworkState")
-    public String artworkState;
+    public Object artworkState;
 
     @JsonProperty("artworkPublisher")
-    public String artworkPublisher;
+    public Object artworkPublisher;
 
     @JsonProperty("artworkPrimaryInscriptions")
-    public String artworkPrimaryInscriptions;
+    public Object artworkPrimaryInscriptions;
 
     @JsonProperty("artworkSecondaryInscriptions")
-    public String artworkSecondaryInscriptions;
+    public Object artworkSecondaryInscriptions;
 
     @JsonProperty("artworkTertiaryInscriptions")
-    public String artworkTertiaryInscriptions;
+    public Object artworkTertiaryInscriptions;
 
     @JsonProperty("typeStatus")
-    public String typeStatus;
+    public Object typeStatus;
 
     @JsonProperty("identifiedBy")
-    public String identifiedBy;
+    public Object identifiedBy;
 
     @JsonProperty("dateIdentified")
-    public String dateIdentified;
+    public Object dateIdentified;
 
     @JsonProperty("qualifier")
-    public String qualifier;
+    public Object qualifier;
 
     @JsonProperty("qualifierRank")
-    public String qualifierRank;
+    public Object qualifierRank;
 
     @JsonProperty("taxonomy")
     public MuseumVictoriaTaxonomyModel taxonomy;

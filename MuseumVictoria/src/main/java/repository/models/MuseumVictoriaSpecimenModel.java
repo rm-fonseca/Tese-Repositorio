@@ -72,7 +72,7 @@ public class MuseumVictoriaSpecimenModel {
     public List<String> relatedSpeciesIds;
 
     @JsonProperty("media")
-    public List<MuseumVictoriaMediaModel> media;
+    public List<AMuseumVictoriaMediaModel> media;
 
     @JsonProperty("acquisitionInformation")
     public String acquisitionInformation;
@@ -93,25 +93,25 @@ public class MuseumVictoriaSpecimenModel {
     public String sex;
 
     @JsonProperty("stageOrAge")
-    public String stageOrAge;
+    public Object stageOrAge;
 
     @JsonProperty("storages")
     public List<MuseumVictoriaStoragesModel> storages;
 
     @JsonProperty("typeStatus")
-    public String typeStatus;
+    public Object typeStatus;
 
     @JsonProperty("identifiedBy")
-    public String identifiedBy;
+    public Object identifiedBy;
 
     @JsonProperty("dateIdentified")
-    public String dateIdentified;
+    public Object dateIdentified;
 
     @JsonProperty("qualifier")
-    public String qualifier;
+    public Object qualifier;
 
     @JsonProperty("qualifierRank")
-    public String qualifierRank;
+    public Object qualifierRank;
 
     @JsonProperty("taxonomy")
     public MuseumVictoriaTaxonomyModel taxonomy;
@@ -123,88 +123,88 @@ public class MuseumVictoriaSpecimenModel {
     public MuseumVictoriaCollectionSiteModel collectionSite;
 
     @JsonProperty("palaeontologyDateCollectedFrom")
-    public String palaeontologyDateCollectedFrom;
+    public Object palaeontologyDateCollectedFrom;
 
     @JsonProperty("palaeontologyDateCollectedTo")
-    public String palaeontologyDateCollectedTo;
+    public Object palaeontologyDateCollectedTo;
 
     @JsonProperty("mineralogySpecies")
-    public String mineralogySpecies;
+    public Object mineralogySpecies;
 
     @JsonProperty("mineralogyVariety")
-    public String mineralogyVariety;
+    public Object mineralogyVariety;
 
     @JsonProperty("mineralogyGroup")
-    public String mineralogyGroup;
+    public Object mineralogyGroup;
 
     @JsonProperty("mineralogyClass")
-    public String mineralogyClass;
+    public Object mineralogyClass;
 
     @JsonProperty("mineralogyAssociatedMatrix")
-    public String mineralogyAssociatedMatrix;
+    public Object mineralogyAssociatedMatrix;
 
     @JsonProperty("mineralogyType")
-    public String mineralogyType;
+    public Object mineralogyType;
 
     @JsonProperty("mineralogyTypeOfType")
-    public String mineralogyTypeOfType;
+    public Object mineralogyTypeOfType;
 
     @JsonProperty("meteoritesName")
-    public String meteoritesName;
+    public Object meteoritesName;
 
     @JsonProperty("meteoritesClass")
-    public String meteoritesClass;
+    public Object meteoritesClass;
 
     @JsonProperty("meteoritesGroup")
-    public String meteoritesGroup;
+    public Object meteoritesGroup;
 
     @JsonProperty("meteoritesType")
-    public String meteoritesType;
+    public Object meteoritesType;
 
     @JsonProperty("meteoritesMinerals")
-    public String meteoritesMinerals;
+    public Object meteoritesMinerals;
 
     @JsonProperty("meteoritesSpecimenWeight")
-    public String meteoritesSpecimenWeight;
+    public Object meteoritesSpecimenWeight;
 
     @JsonProperty("meteoritesTotalWeight")
-    public String meteoritesTotalWeight;
+    public Object meteoritesTotalWeight;
 
     @JsonProperty("meteoritesDateFell")
-    public String meteoritesDateFell;
+    public Object meteoritesDateFell;
 
     @JsonProperty("meteoritesDateFound")
-    public String meteoritesDateFound;
+    public Object meteoritesDateFound;
 
     @JsonProperty("tektitesName")
-    public String tektitesName;
+    public Object tektitesName;
 
     @JsonProperty("tektitesClassification")
-    public String tektitesClassification;
+    public Object tektitesClassification;
 
     @JsonProperty("tektitesShape")
-    public String tektitesShape;
+    public Object tektitesShape;
 
     @JsonProperty("tektitesLocalStrewnfield")
-    public String tektitesLocalStrewnfield;
+    public Object tektitesLocalStrewnfield;
 
     @JsonProperty("tektitesGlobalStrewnfield")
-    public String tektitesGlobalStrewnfield;
+    public Object tektitesGlobalStrewnfield;
 
     @JsonProperty("petrologyRockClass")
-    public String petrologyRockClass;
+    public Object petrologyRockClass;
 
     @JsonProperty("petrologyRockGroup")
-    public String petrologyRockGroup;
+    public Object petrologyRockGroup;
 
     @JsonProperty("petrologyRockName")
-    public String petrologyRockName;
+    public Object petrologyRockName;
 
     @JsonProperty("petrologyRockDescription")
-    public String petrologyRockDescription;
+    public Object petrologyRockDescription;
 
     @JsonProperty("petrologyMineralsPresent")
-    public String petrologyMineralsPresent;
+    public Object petrologyMineralsPresent;
 
     @JsonProperty("id")
     public String id;

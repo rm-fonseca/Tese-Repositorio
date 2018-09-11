@@ -53,8 +53,10 @@ public class Repository implements RepositoryAbstract {
 		String response = restTemplate.getForObject(QUERY_BY_TERM + term, String.class);
 		ObjectMapper mapper = new ObjectMapper();
 		final ObjectNode[] nodes = mapper.readValue(response, ObjectNode[].class);
-
+		int i = 0;
 		for(ObjectNode node : nodes) {
+			System.out.println(i);
+			i++;
 			if(node.has("recordType")) {
 				String recordType = node.get("recordType").asText().toUpperCase();
 				switch (recordType) {
@@ -140,30 +142,15 @@ public class Repository implements RepositoryAbstract {
 			}});
 		}
 		//Contributors
-		for (String contributor : articleModel.contributers) {
+		for (MuseumVictoriaAuthorModel contributor : articleModel.contributers) {
 			result.getDcContributor().add(new LanguageString(){{
 				setLanguage("en");
-				getText().add(contributor);
+				getText().add(contributor.fullName);
 			}});
 		}
 		//Media
-		for (MuseumVictoriaMediaModel media : articleModel.media) {
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.small.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.medium.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.large.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.thumbnail.uri);
-			}});
+		for (AMuseumVictoriaMediaModel media : articleModel.media) {
+			connectMedia(media, result);
 		}
 		//Year Written
 		result.getTermsCreated().add(new LanguageString(){{
@@ -316,23 +303,8 @@ public class Repository implements RepositoryAbstract {
 			}});
 		}
 		//Media
-		for (MuseumVictoriaMediaModel media : itemModel.media) {
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.small.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.medium.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.large.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.thumbnail.uri);
-			}});
+		for (AMuseumVictoriaMediaModel media : itemModel.media) {
+			connectMedia(media, result);
 		}
 		results.add(result);
 	}
@@ -370,23 +342,8 @@ public class Repository implements RepositoryAbstract {
 			getValue().add(specimenModel.objectSummary);
 		}});
 		//Media
-		for (MuseumVictoriaMediaModel media : specimenModel.media) {
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.small.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.medium.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.large.uri);
-			}});
-			result.getResources().add(new Resource(){{
-				setType("Image");
-				setUrl(media.thumbnail.uri);
-			}});
+		for (AMuseumVictoriaMediaModel media : specimenModel.media) {
+			connectMedia(media, result);
 		}
 		//Related Item Ids
 		for(String relatedItem : specimenModel.relatedItemIds) {
@@ -419,15 +376,40 @@ public class Repository implements RepositoryAbstract {
 		results.add(result);
 	}
 
-	private static LanguageString getLanguageStringDef (List<LanguageString> langs) {
-		if(langs.size() == 1)
-			return langs.get(0);
-
-		LanguageString lang = new LanguageString();
-		lang.setLanguage("def");
-		langs.add(lang);
-
-		return lang;
+	private static void connectMedia(AMuseumVictoriaMediaModel abstractMediaModel, Result result) {
+		if(abstractMediaModel instanceof MuseumVictoriaFileMediaModel) {
+			MuseumVictoriaFileMediaModel media = (MuseumVictoriaFileMediaModel) abstractMediaModel;
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.file.uri);
+			}});
+		}
+		else if (abstractMediaModel instanceof MuseumVictoriaImageMediaModel) {
+			MuseumVictoriaImageMediaModel media = (MuseumVictoriaImageMediaModel) abstractMediaModel;
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.small.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.medium.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.large.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.thumbnail.uri);
+			}});
+		}
+		else if(abstractMediaModel instanceof MuseumVictoriaUriMediaModel) {
+			MuseumVictoriaUriMediaModel media = (MuseumVictoriaUriMediaModel) abstractMediaModel;
+			result.getResources().add(new Resource(){{
+				setType("Other");
+				setUrl(media.uri);
+			}});
+		}
 	}
 
 	private static String getRepositoryName() throws IOException {
@@ -445,8 +427,8 @@ public class Repository implements RepositoryAbstract {
 			if (pos > 0) {
 				name = name.substring(0, pos);
 			}
-			input = new FileInputStream("Repositorios/" + name + ".properties");
-			//input = new FileInputStream("/home/rgarcia/storage/workspace/Tese-Repositorio/MuseumVictoria/src/main/java/museumvictoria.properties");
+			//input = new FileInputStream("Repositorios/" + name + ".properties");
+			input = new FileInputStream("/home/rgarcia/storage/workspace/Tese-Repositorio/MuseumVictoria/src/main/java/museumvictoria.properties");
 			prop.load(input);
 
 			repName = prop.getOrDefault("Name", "").toString();
