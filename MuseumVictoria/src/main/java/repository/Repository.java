@@ -18,14 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import plataforma.modelointerno.ExtraProperty;
-import plataforma.modelointerno.LanguageString;
-import plataforma.modelointerno.Resource;
-import plataforma.modelointerno.Result;
-import repository.models.MuseumVictoriaArticleModel;
-import repository.models.MuseumVictoriaItemModel;
-import repository.models.MuseumVictoriaRecordTypeModel;
-import repository.models.MuseumVictoriaSpecimenModel;
+import plataforma.modelointerno.*;
+import repository.models.*;
 
 public class Repository implements RepositoryAbstract {
 
@@ -114,7 +108,7 @@ public class Repository implements RepositoryAbstract {
 			getText().add(articleModel.displayTitle);
 		}});
 		//Keywords
-		for(String keyword : articleModel.keywords) {
+		for (String keyword : articleModel.keywords) {
 			ExtraProperty extraProperty = new ExtraProperty();
 			extraProperty.setName("Keyword");
 			extraProperty.getValue().add(keyword);
@@ -130,10 +124,83 @@ public class Repository implements RepositoryAbstract {
 			getValue().add(articleModel.contentSummary);
 		}});
 		//Types
-		for(String type : articleModel.types) {
+		for (String type : articleModel.types) {
 			result.getDcType().add(new LanguageString(){{
 				setLanguage("en");
 				getText().add(type);
+			}});
+		}
+		//Authors
+		for (MuseumVictoriaAuthorModel author : articleModel.authors) {
+			result.getAgents().add(new Agent(){{
+				getName().add(new LanguageString(){{
+					setLanguage("en");
+					getText().add(author.fullName);
+				}});
+			}});
+		}
+		//Contributors
+		for (String contributor : articleModel.contributers) {
+			result.getDcContributor().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(contributor);
+			}});
+		}
+		//Media
+		for (MuseumVictoriaMediaModel media : articleModel.media) {
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.small.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.medium.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.large.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.thumbnail.uri);
+			}});
+		}
+		//Year Written
+		result.getTermsCreated().add(new LanguageString(){{
+			setLanguage("en");
+			getText().add(articleModel.yearWritten);
+		}});
+		//Parent Article Id
+		result.getDcRelation().add(new LanguageString(){{
+			setLanguage("en");
+			getText().add(SOURCE_PAGE_BASE_URL + articleModel.parentArticleId);
+		}});
+		//Child Article Ids
+		for(String childArticle : articleModel.childArticleIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + childArticle);
+			}});
+		}
+		//Related Article Ids
+		for(String relatedArticle : articleModel.relatedArticleIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedArticle);
+			}});
+		}
+		//Related Item Ids
+		for(String relatedItem : articleModel.relatedItemIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedItem);
+			}});
+		}
+		//Related Specimen Ids
+		for(String relatedSpecimen : articleModel.relatedSpecimenIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedSpecimen);
 			}});
 		}
 		results.add(result);
@@ -186,7 +253,6 @@ public class Repository implements RepositoryAbstract {
 			extraProperty.getValue().add(classification);
 			result.getExtraProperties().add(extraProperty);
 		}
-
 		//ObjectName & ObjectSummary
 		result.getExtraProperties().add(new ExtraProperty(){{
 			setName("Object Name");
@@ -196,7 +262,78 @@ public class Repository implements RepositoryAbstract {
 			setName("Object Summary");
 			getValue().add(itemModel.objectSummary);
 		}});
-
+		//Physical Description
+		result.getPhysicalCharacteristics().add(new LanguageString(){{
+			setLanguage("en");
+			getText().add(itemModel.physicalDescription);
+		}});
+		//Keywords
+		for (String keyword : itemModel.keywords) {
+			ExtraProperty extraProperty = new ExtraProperty();
+			extraProperty.setName("Keyword");
+			extraProperty.getValue().add(keyword);
+			result.getExtraProperties().add(extraProperty);
+		}
+		//Shape
+		result.getPhysicalCharacteristics().add(new LanguageString(){{
+			setLanguage("en");
+			getText().add(itemModel.shape);
+		}});
+		//Dimensions
+		for(MuseumVictoriaDimensionModel dimension : itemModel.dimensions) {
+			result.getPhysicalCharacteristics().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(dimension.configuration);
+				getText().add(dimension.dimensions);
+			}});
+		}
+		//Related Item Ids
+		for(String relatedItem : itemModel.relatedItemIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedItem);
+			}});
+		}
+		//Related Speciment Ids
+		for(String relatedSpecimen : itemModel.relatedSpecimenIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedSpecimen);
+			}});
+		}
+		//Related Articles Ids
+		for(String relatedArticle : itemModel.relatedArticleIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedArticle);
+			}});
+		}
+		//Related Species Ids
+		for(String relatedSpecies : itemModel.relatedSpeciesIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedSpecies);
+			}});
+		}
+		//Media
+		for (MuseumVictoriaMediaModel media : itemModel.media) {
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.small.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.medium.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.large.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.thumbnail.uri);
+			}});
+		}
 		results.add(result);
 	}
 
@@ -207,7 +344,78 @@ public class Repository implements RepositoryAbstract {
 		result.getSourceRepositorie().add(getRepositoryName());
 
 		//TODO: Complete mapping of Json to Result
-
+		//Record Type, Category, Discipline, Type
+		result.getDcType().add(new LanguageString() {{
+			setLanguage("en");
+			getText().add(specimenModel.recordType);
+			getText().add(specimenModel.category);
+			getText().add(specimenModel.discipline);
+			getText().add(specimenModel.type);
+			getText().add(specimenModel.scientificGroup);
+		}});
+		//License
+		result.getDcRights().add(new LanguageString() {{
+			setLanguage("en");
+			getText().add(specimenModel.licence.name);}});
+		result.getDcRights().add(new LanguageString() {{
+			setLanguage("en");
+			getText().add(specimenModel.licence.uri);}});
+		//ObjectName & ObjectSummary
+		result.getExtraProperties().add(new ExtraProperty(){{
+			setName("Object Name");
+			getValue().add(specimenModel.objectName);
+		}});
+		result.getExtraProperties().add(new ExtraProperty(){{
+			setName("Object Summary");
+			getValue().add(specimenModel.objectSummary);
+		}});
+		//Media
+		for (MuseumVictoriaMediaModel media : specimenModel.media) {
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.small.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.medium.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.large.uri);
+			}});
+			result.getResources().add(new Resource(){{
+				setType("Image");
+				setUrl(media.thumbnail.uri);
+			}});
+		}
+		//Related Item Ids
+		for(String relatedItem : specimenModel.relatedItemIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedItem);
+			}});
+		}
+		//Related Speciment Ids
+		for(String relatedSpecimen : specimenModel.relatedSpecimenIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedSpecimen);
+			}});
+		}
+		//Related Articles Ids
+		for(String relatedArticle : specimenModel.relatedArticleIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedArticle);
+			}});
+		}
+		//Related Species Ids
+		for(String relatedSpecies : specimenModel.relatedSpeciesIds) {
+			result.getDcRelation().add(new LanguageString(){{
+				setLanguage("en");
+				getText().add(SOURCE_PAGE_BASE_URL + relatedSpecies);
+			}});
+		}
 		results.add(result);
 	}
 
