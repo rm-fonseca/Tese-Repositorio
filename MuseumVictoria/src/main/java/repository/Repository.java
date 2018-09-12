@@ -427,8 +427,8 @@ public class Repository implements RepositoryAbstract {
 			if (pos > 0) {
 				name = name.substring(0, pos);
 			}
-			//input = new FileInputStream("Repositorios/" + name + ".properties");
-			input = new FileInputStream("/home/rgarcia/storage/workspace/Tese-Repositorio/MuseumVictoria/src/main/java/museumvictoria.properties");
+			input = new FileInputStream("Repositorios/" + name + ".properties");
+			//input = new FileInputStream("/home/rgarcia/storage/workspace/Tese-Repositorio/MuseumVictoria/src/main/java/museumvictoria.properties");
 			prop.load(input);
 
 			repName = prop.getOrDefault("Name", "").toString();
