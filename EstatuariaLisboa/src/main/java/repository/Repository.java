@@ -23,7 +23,10 @@ import repository.model.GeoPoint;
 public class Repository implements RepositoryAbstract {
 
 	//This needs to be change if the CSV dir for the Repo changes
-	public static final String CSV_REPO = "/home/rgarcia/storage/workspace/Tese-Repositorio/EstatuariaLisboa/src/main/java/Estatu%C3%A1ria.csv";
+    //public static final String CSV_REPO = "/home/rgarcia/storage/workspace/Tese-Repositorio/EstatuariaLisboa/src/main/java/Estatu%C3%A1ria.csv";
+	
+	public static final String CSV_REPO = "E:/Code/Tese-Repositorio/EstatuariaLisboa/src/main/java/Estatu%C3%A1ria.csv";
+
 	private static String repName = null;
 
 	@Override
@@ -147,8 +150,8 @@ public class Repository implements RepositoryAbstract {
 			if (pos > 0) {
 				name = name.substring(0, pos);
 			}
-			//input = new FileInputStream("Repositorios/" + name + ".properties");
-			input = new FileInputStream("/home/rgarcia/storage/workspace/Tese-Repositorio/MuseumVictoria/src/main/java/museumvictoria.properties");
+            //input = new FileInputStream("/home/rgarcia/storage/workspace/Tese-Repositorio/MuseumVictoria/src/main/java/museumvictoria.properties");
+			input = new FileInputStream("E:/Code/Tese-Repositorio/EstatuariaLisboa/src/main/java/estatuarialisboa.properties");
 			prop.load(input);
 
 			repName = prop.getOrDefault("Name", "").toString();
