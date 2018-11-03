@@ -30,14 +30,14 @@ import org.json.*;
 
 public class Repository implements RepositoryAbstract {
 
-	
 	private String repName = null;
 	private String key = null;
-	
-	
+
 	private static String EUROPEANA_KEY_PARAM = "wskey";
 	private static String EUROPEANA_QUERY_PARAM = "query";
 	private static String EUROPEANA_START_PARAM = "start";
+	private static String EUROPEANA_ROWS_PARAM = "rows";
+	private static int EUROPEANA_ROWS_VALUE = 50;
 	private static String EUROPEANA_QUERY_BOX_SEARCH = "pl_wgs84_pos_lat:[%d+TO+%d]+AND+pl_wgs84_pos_long:[%d+TO+%d]";
 	private static String EUROPEANA_HOST_URL = "https://www.europeana.eu/api/v2/search.json";
 
@@ -48,21 +48,20 @@ public class Repository implements RepositoryAbstract {
 		String requestQuery = String.format(EUROPEANA_QUERY_BOX_SEARCH, latitudeFrom, latitudeTo, longitudeFrom,
 				longitudeTo);
 
-
-		
 		int startPage = 1;
 		int count = 1;
 		UriComponentsBuilder builder;
 		List<Result> result = new ArrayList<Result>();
-		while (startPage < 50 && count > 0) {
+		while (startPage < 100 && count > 0) {
 
-			
-			
 			// Query parameters
 			builder = UriComponentsBuilder.fromUriString(EUROPEANA_HOST_URL)
 					// Add query parameter
 					.queryParam(EUROPEANA_KEY_PARAM, getKey()).queryParam(EUROPEANA_QUERY_PARAM, requestQuery)
-					.queryParam(EUROPEANA_START_PARAM, startPage);
+					.queryParam(EUROPEANA_START_PARAM, startPage)
+					.queryParam(EUROPEANA_ROWS_PARAM, EUROPEANA_ROWS_VALUE);
+
+			System.out.println(builder.buildAndExpand().toUri());
 
 			String response = getRestTemplate().getForObject(builder.buildAndExpand().toUri(), String.class);
 
@@ -74,12 +73,15 @@ public class Repository implements RepositoryAbstract {
 				return result;
 			}
 
+			if (!responseJson.has("itemsCount"))
+				return result;
+
 			count = responseJson.getInt("itemsCount");
 
 			result.addAll(ConvertData(response, ignoreExtraProperties));
 
 			startPage += count;
-			
+
 		}
 		return result;
 
@@ -87,16 +89,42 @@ public class Repository implements RepositoryAbstract {
 
 	@Override
 	public List<Result> SearchByTerm(String term, boolean ignoreExtraProperties) throws IOException {
-		// Query parameters
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(EUROPEANA_HOST_URL)
-				// Add query parameter
-				.queryParam(EUROPEANA_KEY_PARAM, getKey()).queryParam(EUROPEANA_QUERY_PARAM, term);
 
-		
-		// Request
-		String response = getRestTemplate().getForObject(builder.buildAndExpand().toUri(), String.class);
+		int startPage = 1;
+		int count = 1;
+		UriComponentsBuilder builder;
+		List<Result> result = new ArrayList<Result>();
+		while (startPage < 100 && count > 0) {
 
-		return ConvertData(response, ignoreExtraProperties);
+			// Query parameters
+			builder = UriComponentsBuilder.fromUriString(EUROPEANA_HOST_URL)
+					// Add query parameter
+					.queryParam(EUROPEANA_KEY_PARAM, getKey()).queryParam(EUROPEANA_QUERY_PARAM, term)
+					.queryParam(EUROPEANA_START_PARAM, startPage)
+					.queryParam(EUROPEANA_ROWS_PARAM, EUROPEANA_ROWS_VALUE);
+			;
+
+			// Request
+			String response = getRestTemplate().getForObject(builder.buildAndExpand().toUri(), String.class);
+
+			JSONObject responseJson = new JSONObject(response);
+
+			int totalResults = responseJson.getInt("totalResults");
+
+			if (totalResults == 0) {
+				return result;
+			}
+
+			if (!responseJson.has("itemsCount"))
+				return result;
+			count = responseJson.getInt("itemsCount");
+
+			result.addAll(ConvertData(response, ignoreExtraProperties));
+
+			startPage += count;
+
+		}
+		return result;
 	}
 
 	private RestTemplate getRestTemplate() {
@@ -133,7 +161,6 @@ public class Repository implements RepositoryAbstract {
 			item = items.getJSONObject(i);
 
 			response = getRestTemplate().getForObject(item.getString("link"), String.class);
-
 
 			Result result = new Result();
 			result.getSourceData().add(item.getString("link"));
@@ -371,14 +398,12 @@ public class Repository implements RepositoryAbstract {
 		switch (key) {
 
 		case "edmObject":
-		case "edmIsShownBy":
-
+		case "edmIsShownBy": {
 			Resource res = new Resource();
 			String url = object.toString();
-			
+
 			String[] values = url.split("\\.");
-			String extension = values[values.length-1].split("\\?")[0];
-			
+			String extension = values[values.length - 1].split("\\?")[0];
 
 			switch (extension) {
 
@@ -421,9 +446,64 @@ public class Repository implements RepositoryAbstract {
 
 			res.setUrl(url);
 			result.getResources().add(res);
-
+		}
 			break;
 
+		case "hasView":
+			jsonArray = (JSONArray) object;
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+
+				String url = jsonArray.getString(i);
+
+				Resource res = new Resource();
+
+				String[] values = url.split("\\.");
+				String extension = values[values.length - 1].split("\\?")[0];
+
+				switch (extension) {
+
+				case "jpg":
+					res.setType("Image");
+					break;
+				case "mp3":
+					res.setType("Sound");
+					break;
+
+				default:
+
+					switch (type) {
+
+					case "VIDEO":
+
+						res.setType("Video");
+						break;
+					case "IMAGE":
+
+						res.setType("Image");
+						break;
+
+					case "SOUND":
+
+						res.setType("Sound");
+						break;
+					case "3D":
+					case "_3D":
+
+						res.setType("3D");
+						break;
+					default:
+
+						res.setType("Other");
+
+					}
+
+				}
+
+				res.setUrl(url);
+				result.getResources().add(res);
+
+			}
 		case "edmIsShownAt":
 
 			addWithoutDuplicate(result.getSourcePage(), object.toString());
@@ -644,9 +724,9 @@ public class Repository implements RepositoryAbstract {
 
 			// jsonArray = (JSONArray) object;
 
-			if(location.getCoordinates().size() == 0)
+			if (location.getCoordinates().size() == 0)
 				location.getCoordinates().add(new Point());
-			
+
 			location.getCoordinates().get(0).setLatitude((Float.parseFloat(object.toString())));
 
 			// for (int i = 0; i < jsonArray.length(); i++)
@@ -656,9 +736,9 @@ public class Repository implements RepositoryAbstract {
 
 		case "longitude":
 
-			if(location.getCoordinates().size() == 0)
+			if (location.getCoordinates().size() == 0)
 				location.getCoordinates().add(new Point());
-			
+
 			location.getCoordinates().get(0).setLongitude((Float.parseFloat(object.toString())));
 
 			break;
@@ -899,6 +979,7 @@ public class Repository implements RepositoryAbstract {
 			list.add(value);
 
 	}
+
 	private String getRepositoryName() throws IOException {
 
 		if (repName == null) {
@@ -906,30 +987,25 @@ public class Repository implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repository.class.getProtectionDomain()
-					  .getCodeSource()
-					  .getLocation()
-					  .getPath())
-					.getName();
-			
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
 			int pos = name.lastIndexOf(".");
 			if (pos > 0) {
-			    name = name.substring(0, pos);
+				name = name.substring(0, pos);
 			}
-			
-	
+
 			input = new FileInputStream("Repositorios/" + name + ".properties");
 			prop.load(input);
-			
-			
+
 			repName = prop.getOrDefault("Name", "").toString();
-			
+
 		}
 
 		return repName;
 
 	}
-	
+
 	private String getKey() throws IOException {
 
 		if (key == null) {
@@ -937,24 +1013,19 @@ public class Repository implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repository.class.getProtectionDomain()
-					  .getCodeSource()
-					  .getLocation()
-					  .getPath())
-					.getName();
-			
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
 			int pos = name.lastIndexOf(".");
 			if (pos > 0) {
-			    name = name.substring(0, pos);
+				name = name.substring(0, pos);
 			}
-			
-	
+
 			input = new FileInputStream("Repositorios/" + name + ".properties");
 			prop.load(input);
-			
-			
+
 			key = prop.getOrDefault("Key", "").toString();
-			
+
 		}
 
 		return key;
