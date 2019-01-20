@@ -33,12 +33,99 @@ public class Repository implements RepositoryAbstract {
 
 	private static final String QUERY_BY_TERM_PART1 = "https://services.arcgis.com/1dSrzEWVQn5kHHyK/arcgis/rest/services/Cultura_CasasReligiosas/FeatureServer/0/query?where=UPPER(DESIGNACAO) like '%";
 	private static final String QUERY_BY_TERM_PART2 = "%'&outFields=*&outSR=4326&f=json";
+	private static final String QUERY_GET_RESULT_PART1 = "https://services.arcgis.com/1dSrzEWVQn5kHHyK/arcgis/rest/services/Cultura_CasasReligiosas/FeatureServer/0/query?where=OBJECTID = ";
+	private static final String QUERY_GET_RESULT_PART2 = "&outFields=*&outSR=4326&f=json";
 	private String repName = null;
+	private static String repositoryID = null;
 
 	@Override
 	public List<Result> SearchByBox(int latitudeFrom, int latitudeTo, int longitudeFrom, int longitudeTo,
 			boolean ignoreExtraProperties) {
 		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public Result getResult(String idResult, boolean ignoreExtraProperties) throws Exception {
+		final RestTemplate restTemplate = new RestTemplate();
+		final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		final HttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
+		factory.setHttpClient(httpClient);
+		restTemplate.setRequestFactory(factory);
+		// Request
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+		HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+		String request =  QUERY_GET_RESULT_PART1 + idResult + QUERY_GET_RESULT_PART2;
+		
+		
+		ResponseEntity<String> responseResponseEntity = restTemplate.exchange(request, HttpMethod.GET, entity,
+				String.class);
+
+		String response = responseResponseEntity.getBody();
+
+		// restTemplate.getForObject(request, String.class);
+
+		// Convert to Results
+		List<Result> resultsList = new ArrayList<Result>();
+		JSONObject responseJson = new JSONObject(response);
+
+		JSONArray items = responseJson.getJSONArray("features");
+
+		JSONObject item;
+		JSONObject attributes, geometry;
+		JSONArray keyValues;
+
+		for (Object itemObject : items) {
+
+			item = (JSONObject) itemObject;
+			attributes = item.getJSONObject("attributes");
+			geometry = item.getJSONObject("geometry");
+			Result result = new Result();
+			result.getSourcePage().add(attributes.getString("URL"));
+			result.getSourceData()
+					.add(QUERY_BY_TERM_PART1 + attributes.getString("DESIGNACAO").toUpperCase() + QUERY_BY_TERM_PART2);
+			result.getSourceRepositorie().add(getRepositoryName());
+
+			Iterator<String> keys = attributes.keys();
+
+			String key;
+
+			while (keys.hasNext()) {
+				key = keys.next();
+
+				List<String> values = new ArrayList<String>();
+				keyValues = attributes.optJSONArray(key);
+
+				if (keyValues != null)
+					for (int j = 0; j < keyValues.length(); j++)
+						values.add(keyValues.get(j).toString());
+				else
+					values.add(attributes.get(key).toString());
+
+				connectData(key, values, result, ignoreExtraProperties);
+
+			}
+
+			Location loc = new Location();
+
+			Point point = new Point();
+			point.setLatitude(geometry.getFloat("y"));
+			point.setLongitude(geometry.getFloat("x"));
+			loc.getCoordinates().add(point);
+			result.getLocations().add(loc);
+
+			resultsList.add(result);
+
+		}
+
+		if(resultsList.isEmpty())
+			return null;
+
+		return resultsList.get(0);
+		
 	}
 
 	@Override
@@ -121,7 +208,7 @@ public class Repository implements RepositoryAbstract {
 
 	}
 
-	private void connectData(String key, List<String> values, Result result, boolean ignoreExtraProperties) {
+	private void connectData(String key, List<String> values, Result result, boolean ignoreExtraProperties) throws IOException {
 
 		LanguageString lang;
 
@@ -131,6 +218,12 @@ public class Repository implements RepositoryAbstract {
 
 			lang = getLanguageStringDef(result.getDcTitle());
 			lang.getText().addAll(values);
+
+			break;
+
+		case "OBJECTID":
+
+			result.setID(getRepositoryID()+"/" + values.get(0));
 
 			break;
 
@@ -185,5 +278,38 @@ public class Repository implements RepositoryAbstract {
 		return repName;
 
 	}
+	
+	private static String getRepositoryID() {
+
+		if (repositoryID == null) {
+
+			Properties prop = new Properties();
+			InputStream input = null;
+
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
+			int pos = name.lastIndexOf(".");
+			if (pos > 0) {
+				name = name.substring(0, pos);
+			}
+
+			try {
+				input = new FileInputStream("Repositorios/" + name + ".properties");
+				prop.load(input);
+
+			} catch (IOException e) {
+				repositoryID = "-1";
+				return repositoryID;
+			}
+
+			repositoryID = prop.getOrDefault("ID", "").toString();
+
+		}
+
+		return repositoryID;
+
+	}
+
 
 }

@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-
 import plataforma.modelointerno.ExtraProperty;
 import plataforma.modelointerno.LanguageString;
 import plataforma.modelointerno.Resource;
@@ -32,11 +31,70 @@ public class Repository implements RepositoryAbstract {
 
 	private String repName = null;
 	private String key = null;
+	private static String repositoryID = null;
 
-	
 	public List<Result> SearchByBox(int latitudeFrom, int latitudeTo, int longitudeFrom, int longitudeTo,
 			boolean ignoreExtraProperties) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Result getResult(String idResult, boolean ignoreExtraProperties) throws Exception {
+
+		final RestTemplate restTemplate = new RestTemplate();
+		final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		final HttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
+		factory.setHttpClient(httpClient);
+		restTemplate.setRequestFactory(factory);
+
+		int id;
+		try {
+			id = Integer.parseInt(idResult);
+		} catch (Exception e) {
+			return null;
+		}
+		
+		System.out.println(SOURCE_DATA_BASE_URL);
+		System.out.println(idResult);
+		String request = String.format(SOURCE_DATA_BASE_URL, id, getKey());
+
+		// Request
+		String response = restTemplate.getForObject(request, String.class);
+
+		// Convert to Results
+		JSONObject item = new JSONObject(response).getJSONObject("record");
+		JSONArray keyValues;
+
+		Result result = new Result();
+		result.getSourcePage().add(String.format(SOURCE_PAGE_BASE_URL, item.getInt("id")));
+		result.setID(String.format(getRepositoryID() + "/" + item.getInt("id")));
+		result.getSourceData().add(String.format(SOURCE_DATA_BASE_URL, item.getInt("id"), getKey()));
+		result.getSourcePage().add(item.getString("landing_url"));
+
+		result.getSourceRepositorie().add(getRepositoryName());
+
+		Iterator<String> keys = item.keys();
+
+		String key;
+
+		while (keys.hasNext()) {
+			key = keys.next();
+
+			List<String> values = new ArrayList<String>();
+			keyValues = item.optJSONArray(key);
+
+			if (keyValues != null)
+				for (int j = 0; j < keyValues.length(); j++)
+					values.add(keyValues.get(j).toString());
+			else
+				values.add(item.get(key).toString());
+
+			connectData(key, values, result, ignoreExtraProperties);
+
+		}
+
+		return result;
+
 	}
 
 	public List<Result> SearchByTerm(String term, boolean ignoreExtraProperties) throws Exception {
@@ -65,6 +123,7 @@ public class Repository implements RepositoryAbstract {
 			item = (JSONObject) itemObject;
 			Result result = new Result();
 			result.getSourcePage().add(String.format(SOURCE_PAGE_BASE_URL, item.getInt("id")));
+			result.setID(String.format(getRepositoryID() + "/" + item.getInt("id")));
 			result.getSourceData().add(String.format(SOURCE_DATA_BASE_URL, item.getInt("id"), getKey()));
 			result.getSourcePage().add(item.getString("landing_url"));
 
@@ -151,26 +210,22 @@ public class Repository implements RepositoryAbstract {
 		case "thumbnail_url":
 		case "large_thumbnail_url":
 
-			
-			
 			for (String value : values) {
 
-				
 				if (value.equals("null"))
 					continue;
 
 				boolean duplicate = false;
 				for (Resource res : result.getResources()) {
-					if (res.getUrl().equals(value))
-					{
+					if (res.getUrl().equals(value)) {
 						duplicate = true;
 						continue;
 					}
 				}
 
-				if(duplicate)
+				if (duplicate)
 					continue;
-				
+
 				Resource res = new Resource();
 				res.setType("Image");
 				res.setUrl(value);
@@ -226,7 +281,7 @@ public class Repository implements RepositoryAbstract {
 			list.add(value);
 
 	}
-	
+
 	private String getRepositoryName() throws IOException {
 
 		if (repName == null) {
@@ -234,30 +289,25 @@ public class Repository implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repository.class.getProtectionDomain()
-					  .getCodeSource()
-					  .getLocation()
-					  .getPath())
-					.getName();
-			
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
 			int pos = name.lastIndexOf(".");
 			if (pos > 0) {
-			    name = name.substring(0, pos);
+				name = name.substring(0, pos);
 			}
-			
-	
+
 			input = new FileInputStream("Repositorios/" + name + ".properties");
 			prop.load(input);
-			
-			
+
 			repName = prop.getOrDefault("Name", "").toString();
-			
+
 		}
 
 		return repName;
 
 	}
-	
+
 	private String getKey() throws IOException {
 
 		if (key == null) {
@@ -265,27 +315,54 @@ public class Repository implements RepositoryAbstract {
 			Properties prop = new Properties();
 			InputStream input = null;
 
-			String name = new java.io.File(Repository.class.getProtectionDomain()
-					  .getCodeSource()
-					  .getLocation()
-					  .getPath())
-					.getName();
-			
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
 			int pos = name.lastIndexOf(".");
 			if (pos > 0) {
-			    name = name.substring(0, pos);
+				name = name.substring(0, pos);
 			}
-			
-	
+
 			input = new FileInputStream("Repositorios/" + name + ".properties");
 			prop.load(input);
-			
-			
+
 			key = prop.getOrDefault("Key", "").toString();
-			
+
 		}
 
 		return key;
+
+	}
+
+	private static String getRepositoryID() {
+
+		if (repositoryID == null) {
+
+			Properties prop = new Properties();
+			InputStream input = null;
+
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
+			int pos = name.lastIndexOf(".");
+			if (pos > 0) {
+				name = name.substring(0, pos);
+			}
+
+			try {
+				input = new FileInputStream("Repositorios/" + name + ".properties");
+				prop.load(input);
+
+			} catch (IOException e) {
+				repositoryID = "-1";
+				return repositoryID;
+			}
+
+			repositoryID = prop.getOrDefault("ID", "").toString();
+
+		}
+
+		return repositoryID;
 
 	}
 

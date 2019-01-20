@@ -1,8 +1,10 @@
 package repository;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 
 import java.util.Iterator;
@@ -32,6 +34,7 @@ public class Repository implements RepositoryAbstract {
 
 	private String repName = null;
 	private String key = null;
+	private static String repositoryID = null;
 
 	private static String EUROPEANA_KEY_PARAM = "wskey";
 	private static String EUROPEANA_QUERY_PARAM = "query";
@@ -40,6 +43,7 @@ public class Repository implements RepositoryAbstract {
 	private static int EUROPEANA_ROWS_VALUE = 50;
 	private static String EUROPEANA_QUERY_BOX_SEARCH = "pl_wgs84_pos_lat:[%d+TO+%d]+AND+pl_wgs84_pos_long:[%d+TO+%d]";
 	private static String EUROPEANA_HOST_URL = "https://www.europeana.eu/api/v2/search.json";
+	private static String EUROPEANA_RECORD_URL = "https://www.europeana.eu/api/v2/record/%s.json";
 
 	@Override
 	public List<Result> SearchByBox(int latitudeFrom, int latitudeTo, int longitudeFrom, int longitudeTo,
@@ -125,6 +129,53 @@ public class Repository implements RepositoryAbstract {
 
 		}
 		return result;
+	}
+
+	@Override
+	public Result getResult(String idResult, boolean ignoreExtraProperties) throws Exception {
+
+		UriComponentsBuilder builder;
+
+		String requestUrl = String.format(EUROPEANA_RECORD_URL, idResult);
+
+		// Query parameters
+		builder = UriComponentsBuilder.fromUriString(requestUrl)
+				// Add query parameter
+				.queryParam(EUROPEANA_KEY_PARAM, getKey());
+
+		URI link = builder.buildAndExpand().toUri();
+		String response = getRestTemplate().getForObject(link, String.class);
+
+		// Convert to Results
+
+		String type;
+
+		JSONObject item;
+		Object keyValues;
+
+		Result result = new Result();
+		JSONObject responseItem = new JSONObject(response);
+		item = responseItem.getJSONObject("object");
+
+		result.getSourceData().add(link.toString());
+		result.getSourceRepositorie().add(getRepositoryName());
+		type = item.getString("type");
+
+		Iterator<String> keys = item.keys();
+
+		String key;
+
+		while (keys.hasNext()) {
+			key = keys.next();
+
+			keyValues = item.get(key);
+
+			connectData(key, keyValues, result, ignoreExtraProperties, type);
+
+		}
+
+		return result;
+
 	}
 
 	private RestTemplate getRestTemplate() {
@@ -252,6 +303,10 @@ public class Repository implements RepositoryAbstract {
 		case "dcType":
 		case "type":
 			getLanguageStringFromJson(values, result.getDcType());
+			break;
+			
+		case "about":
+			result.setID(getRepositoryID() + values.toString());
 			break;
 
 		case "aggregations":
@@ -1031,4 +1086,37 @@ public class Repository implements RepositoryAbstract {
 		return key;
 
 	}
+	
+	private static String getRepositoryID() {
+
+		if (repositoryID == null) {
+
+			Properties prop = new Properties();
+			InputStream input = null;
+
+			String name = new java.io.File(
+					Repository.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
+
+			int pos = name.lastIndexOf(".");
+			if (pos > 0) {
+				name = name.substring(0, pos);
+			}
+
+			try {
+				input = new FileInputStream("Repositorios/" + name + ".properties");
+				prop.load(input);
+
+			} catch (IOException e) {
+				repositoryID = "-1";
+				return repositoryID;
+			}
+
+			repositoryID = prop.getOrDefault("ID", "").toString();
+
+		}
+
+		return repositoryID;
+
+	}
+
 }
